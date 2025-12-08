@@ -10,7 +10,6 @@
  af491.rde1.dev.personio-internal.de
  agreeable.rre-green.dev.personio-internal.de
  ahead.rre-red.dev.personio-internal.de
- ai.dev.personio-internal.de
  ancient.rre-red.dev.personio-internal.de
  api.dev.personio-internal.de
  ar.dev.personio-internal.de
