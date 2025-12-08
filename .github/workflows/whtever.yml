@@ -15,8 +15,15 @@ jobs:
       - name: Build matrix from file
         id: build
         run: |
-          json=$(jq -R -s 'split("\n") | map(select(length>0))' extra-sub-2.txt)
-          echo "matrix=$json" >> $GITHUB_OUTPUT
+          # Read, trim, remove quotes, filter empty lines,
+          # then convert to JSON array
+          json=$(sed 's/^ *//; s/ *$//; s/"//g' extra-   sub-2.txt \
+          | jq -R -s 'split("\n") | map(select(length>0))')
+
+          # Escape JSON for GitHub output
+          json_escaped=$(printf '%s' "$json" | jq -c '.')
+
+          echo "matrix=$json_escaped" >> $GITHUB_OUTPUT
 
   gobuster:
     needs: load_subdomains
