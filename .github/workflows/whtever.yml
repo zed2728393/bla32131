@@ -15,20 +15,15 @@ jobs:
       - name: Build matrix from file
         id: build
         run: |
-          # Read, trim, remove quotes, filter empty lines,
-          # then convert to JSON array
           json=$(sed 's/^ *//; s/ *$//; s/"//g' extra-sub-2.txt \
           | jq -R -s 'split("\n") | map(select(length>0))')
-
-          # Escape JSON for GitHub output
           json_escaped=$(printf '%s' "$json" | jq -c '.')
-
           echo "matrix=$json_escaped" >> $GITHUB_OUTPUT
 
   gobuster:
     needs: load_subdomains
     runs-on: ubuntu-latest
-    timeout-minutes: 360  # 6 hours max per subdomain/job
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
@@ -48,7 +43,7 @@ jobs:
 
       - name: Download SecLists
         run: |
-          git clone https://github.com/danielmiessler/SecLists.git
+          git clone https://github.com/danielmiessler/ SecLists.git
 
       - name: Run gobuster DNS brute
         run: |
@@ -57,11 +52,32 @@ jobs:
             -d "${{ matrix.domain }}" \
             -t 500 \
             -w SecLists/Discovery/DNS/dns-Jhaddix.txt \
-            --wildcard  \
+            --wildcard -q \
             > results/${{ matrix.domain }}.txt
 
-      - name: Upload results
+      - name: Upload results for this domain
         uses: actions/upload-artifact@v4
         with:
-          name: dns-results
+          name: results-${{ matrix.domain }}
           path: results/
+
+  merge_results:
+    needs: gobuster
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all_results/
+
+      - name: Merge all result files
+        run: |
+          mkdir -p merged-results
+          find all_results -type f -name "*.txt" -print0 | sort -z | xargs -0 cat >> merged-results/all-domains.txt
+
+      - name: Upload merged results
+        uses: actions/upload-artifact@v4
+        with:
+          name: gobuster-merged-results
+          path: merged-results/all-domains.txt
