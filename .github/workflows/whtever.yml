@@ -15,7 +15,7 @@ jobs:
       - name: Build matrix from file
         id: build
         run: |
-          json=$(jq -R -s 'split("\n") | map(select(length>0))' .github/subdomains.txt)
+          json=$(jq -R -s 'split("\n") | map(select(length>0))' .github/extr-sub-2.txt)
           echo "matrix=$json" >> $GITHUB_OUTPUT
 
   gobuster:
