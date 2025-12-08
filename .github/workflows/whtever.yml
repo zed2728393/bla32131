@@ -17,7 +17,7 @@ jobs:
         run: |
           # Read, trim, remove quotes, filter empty lines,
           # then convert to JSON array
-          json=$(sed 's/^ *//; s/ *$//; s/"//g' extra-   sub-2.txt \
+          json=$(sed 's/^ *//; s/ *$//; s/"//g' extra-sub-2.txt \
           | jq -R -s 'split("\n") | map(select(length>0))')
 
           # Escape JSON for GitHub output
