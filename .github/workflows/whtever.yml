@@ -55,9 +55,9 @@ jobs:
           mkdir -p results
           gobuster dns \
             -d "${{ matrix.domain }}" \
-            -t 800 \
+            -t 500 \
             -w SecLists/Discovery/DNS/dns-Jhaddix.txt \
-            --wildcard -r 1.1.1.1 \
+            --wildcard  \
             > results/${{ matrix.domain }}.txt
 
       - name: Upload results
