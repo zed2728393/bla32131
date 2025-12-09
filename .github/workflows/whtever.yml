@@ -43,7 +43,7 @@ jobs:
 
       - name: Download SecLists
         run: |
-          git clone https://github.com/danielmiessler/ SecLists.git
+          git clone https://github.com/danielmiessler/SecLists.git
 
       - name: Run gobuster DNS brute
         run: |
